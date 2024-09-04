@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import pandas_ta as ta
 
+
 ## Fetching stock data
 def get_data(symbol):
 
