@@ -1,10 +1,12 @@
 ## imports
 import streamlit as st
+import ta.momentum
+import ta.volatility
+import ta.volume
 import yfinance as yf
 import pandas as pd
 import plotly.graph_objects as go
-import pandas_ta as ta
-
+import ta
 
 ## Fetching stock data
 def get_data(symbol):
@@ -22,11 +24,11 @@ def get_data(symbol):
 
 ## Calculate indicators(rsi, atr)
 def get_indicators(df):
-    rsi = ta.rsi(df['Close'], length=14)
+    rsi = ta.momentum.rsi(df['Close'], window=14)
 
-    atr = ta.atr(df['High'], df['Low'], df['Close'], length=5)
+    roc = ta.momentum.roc(df['Close'], window=6)
 
-    return rsi, atr
+    return rsi, roc
 
 
 ## create our main app
@@ -45,7 +47,7 @@ def app():
         df = get_data(symbol)
 
         if df is not None:
-            rsi, atr = get_indicators(df)
+            rsi, roc = get_indicators(df)
 
     ## Displaying metrics
     col1, col2, col3 = st.columns(3)
@@ -54,7 +56,7 @@ def app():
     with col2:
         st.metric('RSI Value:', f'{rsi.iloc[-1]}')
     with col3:
-        st.metric('ATR Value', f'{atr.iloc[-1]}')
+        st.metric('ROC Value', f'{roc.iloc[-1]}')
 
     ## CandleStick Chart
     st.subheader('Candlestick Chart')
